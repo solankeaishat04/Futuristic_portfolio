@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Muhammad Almukhtar - Frontend Engineer & Svelte Developer">
+    <title>Muhammad Almukhtar | Frontend Engineer</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #18181b;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #8b5cf6, #ec4899);
+            border-radius: 4px;
+        }
+        
+        /* Glass effect */
+        .glass-effect {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Text gradient */
+        .text-gradient {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899, #3b82f6);
+            background-size: 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: gradient 3s ease infinite;
+        }
+        
+        @keyframes gradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .animate-pulse-custom {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        /* Particle canvas */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        /* Smooth scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Sections */
+        section {
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* Terminal */
+        .terminal {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 380px;
+            z-index: 50;
+        }
+        
+        @media (max-width: 640px) {
+            .terminal {
+                width: calc(100% - 40px);
+                right: 20px;
+                left: 20px;
+            }
+        }
+        
+        /* Button hover effects */
+        .btn-gradient {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-gradient:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px -5px rgba(139, 92, 246, 0.4);
+        }
+        
+        /* Skill bar animation */
+        .skill-bar-fill {
+            transition: width 1.5s ease-out;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 3rem;
+            }
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particle-canvas"></canvas>
+    
+    <!-- Navigation -->
+    <nav class="glass-effect" style="position: fixed; top: 0; left: 0; right: 0; z-index: 40; border-bottom: 1px solid rgba(255,255,255,0.1);">
+        <div style="max-width: 1280px; margin: 0 auto; padding: 0 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; height: 64px;">
+                <div style="font-size: 1.5rem; font-weight: bold; cursor: pointer;" onclick="scrollToSection('home')">
+                    <span class="text-gradient">MA</span>
+                </div>
+                <div style="display: none; gap: 2rem;" class="desktop-menu">
+                    <button onclick="scrollToSection('home')" style="background: none; border: none; color: #d1d5db; cursor: pointer; transition: color 0.3s;" onmouseenter="this.style.color='#a78bfa'" onmouseleave="this.style.color='#d1d5db'">Home</button>
+                    <button onclick="scrollToSection('projects')" style="background: none; border: none; color: #d1d5db; cursor: pointer; transition: color 0.3s;" onmouseenter="this.style.color='#a78bfa'" onmouseleave="this.style.color='#d1d5db'">Projects</button>
+                    <button onclick="scrollToSection('skills')" style="background: none; border: none; color: #d1d5db; cursor: pointer; transition: color 0.3s;" onmouseenter="this.style.color='#a78bfa'" onmouseleave="this.style.color='#d1d5db'">Skills</button>
+                    <button onclick="scrollToSection('contact')" style="background: none; border: none; color: #d1d5db; cursor: pointer; transition: color 0.3s;" onmouseenter="this.style.color='#a78bfa'" onmouseleave="this.style.color='#d1d5db'">Contact</button>
+                    <button onclick="toggleTheme()" class="glass-effect" style="padding: 0.5rem; border-radius: 0.5rem; cursor: pointer;">🌙</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section id="home" style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 5rem 1rem 0 1rem; position: relative;">
+        <div style="max-width: 1280px; margin: 0 auto; text-align: center; z-index: 10;">
+            <div style="margin-bottom: 2rem;" class="hero-badge">
+                <div class="glass-effect" style="display: inline-block; padding: 0.5rem 1.25rem; border-radius: 9999px; font-size: 0.875rem;">
+                    <span style="display: inline-block; width: 8px; height: 8px; background: #22c55e; border-radius: 50%; animation: pulse 2s infinite; margin-right: 0.5rem;"></span>
+                    ✨ Available for opportunities • 2026
+                </div>
+            </div>
+            
+            <h1 style="font-size: 3rem; font-weight: bold; margin-bottom: 1.5rem;" class="hero-title">
+                <span class="text-gradient">Muhammad</span><br>
+                <span style="color: white;">Almukhtar</span>
+            </h1>
+            
+            <p style="font-size: 1.25rem; color: #d1d5db; margin-bottom: 1rem;">
+                Frontend Engineer • Svelte Developer
+            </p>
+            
+            <p style="font-size: 1rem; color: #9ca3af; max-width: 600px; margin: 0 auto 3rem auto; padding: 0 1rem;">
+                Building immersive digital experiences with cutting-edge web technologies.
+            </p>
+            
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 3rem; flex-wrap: wrap;">
+                <button onclick="scrollToSection('projects')" class="btn-gradient" style="padding: 0.75rem 2rem; border: none; border-radius: 0.5rem; font-weight: 600; color: white; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                    ✨ Explore My Work
+                </button>
+                <button onclick="alert('Resume download would start here!')" class="glass-effect" style="padding: 0.75rem 2rem; border-radius: 0.5rem; font-weight: 600; background: rgba(255,255,255,0.05); cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
+                    📄 Download Resume
+                </button>
+            </div>
+            
+            <div style="display: flex; gap: 1.5rem; justify-content: center;">
+                <a href="https://github.com" target="_blank" class="glass-effect" style="padding: 0.75rem; border-radius: 9999px; text-decoration: none; transition: all 0.3s;" onmouseenter="this.style.transform='scale(1.1)'" onmouseleave="this.style.transform='scale(1)'">📦</a>
+                <a href="https://linkedin.com" target="_blank" class="glass-effect" style="padding: 0.75rem; border-radius: 9999px; text-decoration: none; transition: all 0.3s;" onmouseenter="this.style.transform='scale(1.1)'" onmouseleave="this.style.transform='scale(1)'">🔗</a>
+                <a href="https://twitter.com" target="_blank" class="glass-effect" style="padding: 0.75rem; border-radius: 9999px; text-decoration: none; transition: all 0.3s;" onmouseenter="this.style.transform='scale(1.1)'" onmouseleave="this.style.transform='scale(1)'">🐦</a>
+            </div>
+        </div>
+        
+        <!-- Scroll indicator -->
+        <div style="position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); animation: float 2s infinite;">
+            <div style="width: 24px; height: 40px; border: 2px solid rgba(255,255,255,0.3); border-radius: 9999px; display: flex; justify-content: center;">
+                <div style="width: 4px; height: 8px; background: #a78bfa; border-radius: 9999px; margin-top: 8px;"></div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Projects Section -->
+    <section id="projects" style="padding: 5rem 1rem; position: relative;">
+        <div style="max-width: 1280px; margin: 0 auto;">
+            <div style="text-align: center; margin-bottom: 4rem;">
+                <h2 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem;" class="text-gradient">Featured Projects</h2>
+                <p style="color: #9ca3af;">Exploring the intersection of creativity and technology</p>
+                <div style="width: 80px; height: 4px; background: linear-gradient(135deg, #8b5cf6, #ec4899); margin: 1rem auto 0; border-radius: 9999px;"></div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;" class="projects-grid">
+                <!-- Project 1 -->
+                <div class="glass-effect project-card" style="border-radius: 0.75rem; overflow: hidden; transition: all 0.3s; cursor: pointer;" onmouseenter="this.style.transform='scale(1.05)'; this.style.boxShadow='0 0 30px rgba(139,92,246,0.3)'" onmouseleave="this.style.transform='scale(1)'; this.style.boxShadow='none'">
+                    <div style="padding: 1.5rem;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">🤖</div>
+                        <h3 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem;">AI Dashboard</h3>
+                        <p style="color: #9ca3af; margin-bottom: 1rem; font-size: 0.875rem;">Real-time analytics with AI-powered insights and predictive modeling.</p>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem;">
+                            <span style="font-size: 0.75rem; padding: 0.25rem 0.75rem; background: rgba(255,255,255,0.1); border-radius: 9999px;">React</span>
+                            <span style="font-size: 0.75rem; padding: 0.25rem 0.75rem; background: rgba(255,255,255,0.1); border-radius: 9999px;">GSAP</span>
+                            <span style="font-size: 0.75rem; padding: 0.25rem 0.75rem; background: rgba(255,255,255,0.1); border-radius: 9999px;">TensorFlow.js</span>
+                        </div>
+                        <div style="display: flex; gap: 0.75rem;">
+                            <a href="#" style="flex: 1; text-align: center; padding: 0.5rem; background: linear-gradient(135deg, #8b5cf6, #ec4899); border-radius: 0.5rem; text-decoration: none; color: white; font-size: 0.875rem;">🚀 Live Demo</a>
+                            <a href="#" style="padding: 0.5rem 1rem; border: 1px solid rgba(255,255,255,0.2); border-radius: 0.5rem; text-decoration: none; color: white; font-size: 0.875rem;">📦 Code</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 2 -->
+                <div class="glass-effect project-card" style="border-radius: 0.75rem; overflow: hidden; transition: all 0.3s; cursor: pointer;" onmouseenter="this.style.transform='scale(1.05)'; this.style.boxShadow='0 0 30px rgba(139,92,246,0.3)'" onmouseleave="this.style.transform='scale(1)'; this.style.boxShadow='none'">
+                    <div style="padding: 1.5rem;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">🌐</div>
+                        <h3 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem;">3D Portfolio</h3>
+                        <p style="color: #9ca3af; margin-bottom: 1rem; font-size: 0.875rem;">Immersive 3D experience with interactive WebGL animations.</p>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem;">
+                            <span style="font-size: 0.75rem; padding: 0.25rem 0.75rem; background: rgba(255,255,255,0.1); border-radius: 9999px;">SvelteKit</span>
+                            <span style="font-size: 0.75rem; padding: 0.25rem 0.75rem; background: rgba(255,255,255,0.1); border-radius: 9999px;">Three.js</span>
+                            <span style="font-size: 0.75rem; padding: 0.25rem 0.75rem; background: rgba(255,255,255,0.1); border-radius: 9999px;">GSAP</span>
+                        </div>
+                        <div style="display: flex; gap: 0.75rem;">
+                            <a href="#" style="flex: 1; text-align: center; padding: 0.5rem; background: linear-gradient(135deg, #8b5cf6, #ec4899); border-radius: 0.5rem; text-decoration: none; color: white; font-size: 0.875rem;">🚀 Live Demo</a>
+                            <a href="#" style="padding: 0.5rem 1rem; border: 1px solid rgba(255,255,255,0.2); border-radius: 0.5rem; text-decoration: none; color: white; font-size: 0.875rem;">📦 Code</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 3 -->
+                <div class="glass-effect project-card" style="border-radius: 0.75rem; overflow: hidden; transition: all 0.3s; cursor: pointer;" onmouseenter="this.style.transform='scale(1.05)'; this.style.boxShadow='0 0 30px rgba(139,92,246,0.3)'" onmouseleave="this.style.transform='scale(1)'; this.style.boxShadow='none'">
+                    <div style="padding: 1.5rem;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">🔌</div>
+                        <h3 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem;">Chrome Extension</h3>
+                        <p style="color: #9ca3af; margin-bottom: 1rem; font-size: 0.875rem;">AI-powered browser extension for content summarization.</p>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem;">
+                            <span style="font-size: 0.75rem; padding: 0.25rem 0.75rem; background: rgba(255,255,255,0.1); border-radius: 9999px;">TypeScript</span>
+                            <span style="font-size: 0.75rem; padding: 0.25rem 0.75rem; background: rgba(255,255,255,0.1); border-radius: 9999px;">Gemini API</span>
+                        </div>
+                        <div style="display: flex; gap: 0.75rem;">
+                            <a href="#" style="flex: 1; text-align: center; padding: 0.5rem; background: linear-gradient(135deg, #8b5cf6, #ec4899); border-radius: 0.5rem; text-decoration: none; color: white; font-size: 0.875rem;">🚀 Live Demo</a>
+                            <a href="#" style="padding: 0.5rem 1rem; border: 1px solid rgba(255,255,255,0.2); border-radius: 0.5rem; text-decoration: none; color: white; font-size: 0.875rem;">📦 Code</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Skills Section -->
+    <section id="skills" style="padding: 5rem 1rem; position: relative;">
+        <div style="max-width: 1024px; margin: 0 auto;">
+            <div style="text-align: center; margin-bottom: 4rem;">
+                <h2 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem;" class="text-gradient">Skills & Expertise</h2>
+                <p style="color: #9ca3af;">Constantly learning and evolving with modern technologies</p>
+                <div style="width: 80px; height: 4px; background: linear-gradient(135deg, #8b5cf6, #ec4899); margin: 1rem auto 0; border-radius: 9999px;"></div>
+            </div>
+            
+            <div style="display: grid; gap: 1.5rem;">
+                <div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600;">⚡ Svelte/SvelteKit</span>
+                        <span style="color: #a78bfa;">95%</span>
+                    </div>
+                    <div style="height: 8px; background: rgba(255,255,255,0.1); border-radius: 9999px; overflow: hidden;">
+                        <div class="skill-bar-fill" style="width: 0%; height: 100%; background: linear-gradient(135deg, #8b5cf6, #ec4899); border-radius: 9999px;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600;">📘 TypeScript</span>
+                        <span style="color: #a78bfa;">90%</span>
+                    </div>
+                    <div style="height: 8px; background: rgba(255,255,255,0.1); border-radius: 9999px; overflow: hidden;">
+                        <div class="skill-bar-fill" style="width: 0%; height: 100%; background: linear-gradient(135deg, #8b5cf6, #ec4899); border-radius: 9999px;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600;">🎨 Three.js</span>
+                        <span style="color: #a78bfa;">85%</span>
+                    </div>
+                    <div style="height: 8px; background: rgba(255,255,255,0.1); border-radius: 9999px; overflow: hidden;">
+                        <div class="skill-bar-fill" style="width: 0%; height: 100%; background: linear-gradient(135deg, #8b5cf6, #ec4899); border-radius: 9999px;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600;">✨ GSAP</span>
+                        <span style="color: #a78bfa;">88%</span>
+                    </div>
+                    <div style="height: 8px; background: rgba(255,255,255,0.1); border-radius: 9999px; overflow: hidden;">
+                        <div class="skill-bar-fill" style="width: 0%; height: 100%; background: linear-gradient(135deg, #8b5cf6, #ec4899); border-radius: 9999px;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="font-weight: 600;">🎨 TailwindCSS</span>
+                        <span style="color: #a78bfa;">92%</span>
+                    </div>
+                    <div style="height: 8px; background: rgba(255,255,255,0.1); border-radius: 9999px; overflow: hidden;">
+                        <div class="skill-bar-fill" style="width: 0%; height: 100%; background: linear-gradient(135deg, #8b5cf6, #ec4899); border-radius: 9999px;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="glass-effect" style="border-radius: 0.75rem; padding: 1.5rem; margin-top: 2rem;">
+                <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center;">
+                    <span style="padding: 0.5rem 1rem; background: rgba(255,255,255,0.05); border-radius: 9999px;">GSAP</span>
+                    <span style="padding: 0.5rem 1rem; background: rgba(255,255,255,0.05); border-radius: 9999px;">Three.js</span>
+                    <span style="padding: 0.5rem 1rem; background: rgba(255,255,255,0.05); border-radius: 9999px;">TypeScript</span>
+                    <span style="padding: 0.5rem 1rem; background: rgba(255,255,255,0.05); border-radius: 9999px;">TailwindCSS</span>
+                    <span style="padding: 0.5rem 1rem; background: rgba(255,255,255,0.05); border-radius: 9999px;">WebGL</span>
+                    <span style="padding: 0.5rem 1rem; background: rgba(255,255,255,0.05); border-radius: 9999px;">Node.js</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Contact Section -->
+    <section id="contact" style="padding: 5rem 1rem; position: relative;">
+        <div style="max-width: 768px; margin: 0 auto;">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <h2 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem;" class="text-gradient">Get In Touch</h2>
+                <p style="color: #9ca3af;">Have a project in mind? Let's collaborate!</p>
+                <div style="width: 80px; height: 4px; background: linear-gradient(135deg, #8b5cf6, #ec4899); margin: 1rem auto 0; border-radius: 9999px;"></div>
+            </div>
+            
+            <div class="glass-effect" style="border-radius: 0.75rem; padding: 2rem;">
+                <form id="contact-form" onsubmit="return handleContactSubmit(event)">
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; color: #d1d5db;">Name *</label>
+                        <input type="text" id="contact-name" required style="width: 100%; padding: 0.75rem 1rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: white; outline: none;" placeholder="Your name">
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; color: #d1d5db;">Email *</label>
+                        <input type="email" id="contact-email" required style="width: 100%; padding: 0.75rem 1rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: white; outline: none;" placeholder="your@email.com">
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem; color: #d1d5db;">Message *</label>
+                        <textarea id="contact-message" required rows="4" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: white; outline: none; resize: vertical;" placeholder="Your message..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-gradient" style="width: 100%; padding: 0.75rem; border: none; border-radius: 0.5rem; font-weight: 600; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        🚀 Send Message
+                    </button>
+                    <div id="form-message" style="margin-top: 1rem; text-align: center; display: none;"></div>
+                </form>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Interactive Terminal -->
+    <div class="terminal">
+        <div class="glass-effect" style="border-radius: 0.5rem; overflow: hidden;" id="terminal">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.1); cursor: pointer;" onclick="toggleTerminal()">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span>💻</span>
+                    <span style="font-size: 0.75rem; font-family: monospace;">developer@portfolio:~</span>
+                </div>
+                <span id="terminal-toggle">−</span>
+            </div>
+            <div id="terminal-body" style="height: 320px; overflow-y: auto; padding: 0.75rem; font-family: monospace; font-size: 0.75rem;">
+                <div style="color: #d1d5db;">╔═══════════════════════════════════════╗</div>
+                <div style="color: #d1d5db;">║   Welcome to Interactive Terminal!   ║</div>
+                <div style="color: #d1d5db;">╚═══════════════════════════════════════╝</div>
+                <div style="color: #d1d5db;"></div>
+                <div style="color: #d1d5db;">🎮 Type "help" to see all available commands</div>
+                <div style="color: #d1d5db;">💡 Try: projects, skills, about, or theme dark</div>
+                <div style="color: #d1d5db;"></div>
+                <div id="terminal-output"></div>
+                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                    <span style="color: #22c55e;">$</span>
+                    <input type="text" id="terminal-input" style="flex: 1; background: transparent; border: none; outline: none; color: white; font-family: monospace; font-size: 0.75rem;" placeholder="Type a command..." autocomplete="off">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Particle System
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let mouseX = 0, mouseY = 0;
+        
+        class Particle {
+            constructor(width, height) {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2 + 0.5;
+                this.color = `hsl(${Math.random() * 60 + 260}, 80%, 65%)`;
+            }
+            
+            update(width, height, mx, my) {
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                const dx = mx - this.x;
+                const dy = my - this.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 100) {
+                    const angle = Math.atan2(dy, dx);
+                    const force = (100 - dist) / 1000;
+                    this.vx -= Math.cos(angle) * force;
+                    this.vy -= Math.sin(angle) * force;
+                }
+                
+                if (this.x < 0 || this.x > width) {
+                    this.vx *= -1;
+                    this.x = Math.max(0, Math.min(width, this.x));
+                }
+                if (this.y < 0 || this.y > height) {
+                    this.vy *= -1;
+                    this.y = Math.max(0, Math.min(height, this.y));
+                }
+                
+                this.vx *= 0.99;
+                this.vy *= 0.99;
+            }
+            
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = 0.5;
+                ctx.fill();
+            }
+        }
+        
+        function initParticles(width, height) {
+            const count = Math.min(150, (width * height) / 8000);
+            particles = [];
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle(width, height));
+            }
+        }
+        
+        function drawConnections() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 100) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = `rgba(139, 92, 246, ${0.15 * (1 - dist / 100)})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+        
+        function animate() {
+            if (!ctx || !canvas) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            grad.addColorStop(0, 'rgba(88, 28, 135, 0.05)');
+            grad.addColorStop(1, 'rgba(59, 130, 246, 0.05)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(p => {
+                p.update(canvas.width, canvas.height, mouseX, mouseY);
+                p.draw();
+            });
+            drawConnections();
+            requestAnimationFrame(animate);
+        }
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initParticles(canvas.width, canvas.height);
+        }
+        
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mouseX = e.clientX - rect.left;
+            mouseY = e.clientY - rect.top;
+        });
+        
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        animate();
+        
+        // GSAP Animations
+        gsap.registerPlugin(ScrollTrigger);
+        
+        // Hero animation
+        gsap.from('.hero-badge', { opacity: 0, y: 30, duration: 0.8, delay: 0.2 });
+        gsap.from('.hero-title', { opacity: 0, y: 50, duration: 1, delay: 0.4 });
+        gsap.from('.hero-buttons', { opacity: 0, y: 30, duration: 0.8, delay: 0.6 });
+        
+        // Skill bars animation
+        ScrollTrigger.batch('.skill-bar-fill', {
+            onEnter: (elements) => {
+                elements.forEach(el => {
+                    const width = el.parentElement.parentElement.querySelector('span:last-child').innerText;
+                    el.style.width = width;
+                });
+            },
+            once: true
+        });
+        
+        // Project cards animation
+        gsap.utils.toArray('.project-card').forEach((card, i) => {
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top bottom-=100",
+                    toggleActions: "play none none reverse"
+                },
+                opacity: 0,
+                y: 50,
+                duration: 0.6,
+                delay: i * 0.1
+            });
+        });
+        
+        // Terminal System
+        let terminalMinimized = false;
+        let terminalOutput = [];
+        let commandHistory = [];
+        let historyIndex = 0;
+        
+        const commands = {
+            help: () => "📚 Available commands:\n  • help - Show this\n  • projects - List projects\n  • skills - Show skills\n  • contact - Contact info\n  • about - About me\n  • clear - Clear terminal\n  • theme [dark/light] - Toggle theme",
+            projects: () => "🚀 Featured Projects:\n  • AI Dashboard\n  • 3D Portfolio\n  • Chrome Extension\n  • Real-time Chat",
+            skills: () => "💻 Core Skills:\n  • Svelte/SvelteKit (95%)\n  • TypeScript (90%)\n  • Three.js (85%)\n  • GSAP (88%)\n  • TailwindCSS (92%)",
+            contact: () => "📬 Contact:\n  Email: muhammad@example.com\n  GitHub: @muhammad-almukhtar",
+            about: () => "👨‍💻 Muhammad Almukhtar - Frontend Engineer creating immersive web experiences.",
+            clear: () => "CLEAR",
+            theme: (args) => {
+                if (args === 'dark') {
+                    document.documentElement.classList.add('dark');
+                    return '✓ Theme changed to dark mode';
+                } else if (args === 'light') {
+                    document.documentElement.classList.remove('dark');
+                    return '✓ Theme changed to light mode';
+                }
+                return '❌ Usage: theme [dark/light]';
+            }
+        };
+        
+        function addTerminalOutput(text, isCommand = false) {
+            const outputDiv = document.getElementById('terminal-output');
+            const line = document.createElement('div');
+            if (isCommand) {
+                line.innerHTML = `<span style="color: #22c55e;">$</span> <span style="color: white;">${text}</span>`;
+            } else {
+                line.innerHTML = `<span style="color: #d1d5db; white-space: pre-wrap;">${text}</span>`;
+            }
+            outputDiv.appendChild(line);
+            const terminalBody = document.getElementById('terminal-body');
+            terminalBody.scrollTop = terminalBody.scrollHeight;
+        }
+        
+        function handleTerminalCommand(input) {
+            if (!input.trim()) return;
+            
+            commandHistory.push(input);
+            historyIndex = commandHistory.length;
+            addTerminalOutput(input, true);
+            
+            const [cmd, ...args] = input.toLowerCase().split(' ');
+            const arg = args.join(' ');
+            
+            if (cmd === 'clear') {
+                document.getElementById('terminal-output').innerHTML = '';
+            } else if (commands[cmd]) {
+                const result = commands[cmd](arg);
+                if (result !== 'CLEAR') {
+                    addTerminalOutput(result);
+                }
+            } else {
+                addTerminalOutput(`❌ Command not found: ${cmd}. Type 'help' for available commands.`);
+            }
+        }
+        
+        function toggleTerminal() {
+            terminalMinimized = !terminalMinimized;
+            const body = document.getElementById('terminal-body');
+            const toggle = document.getElementById('terminal-toggle');
+            if (terminalMinimized) {
+                body.style.display = 'none';
+                toggle.textContent = '+';
+            } else {
+                body.style.display = 'block';
+                toggle.textContent = '−';
+            }
+        }
+        
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+        }
+        
+        function handleContactSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('contact-name').value;
+            const email = document.getElementById('contact-email').value;
+            const message = document.getElementById('contact-message').value;
+            const formMsg = document.getElementById('form-message');
+            
+            if (!name || !email || !message) {
+                formMsg.style.display = 'block';
+                formMsg.innerHTML = '⚠️ Please fill in all fields';
+                formMsg.style.color = '#ef4444';
+                setTimeout(() => formMsg.style.display = 'none', 3000);
+                return false;
+            }
+            
+            formMsg.style.display = 'block';
+            formMsg.innerHTML = '✨ Message sent successfully! I\'ll get back to you soon.';
+            formMsg.style.color = '#22c55e';
+            
+            document.getElementById('contact-name').value = '';
+            document.getElementById('contact-email').value = '';
+            document.getElementById('contact-message').value = '';
+            
+            setTimeout(() => formMsg.style.display = 'none', 3000);
+            return false;
+        }
+        
+        // Terminal input handler
+        const terminalInput = document.getElementById('terminal-input');
+        terminalInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleTerminalCommand(terminalInput.value);
+                terminalInput.value = '';
+            }
+        });
+        
+        terminalInput.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    terminalInput.value = commandHistory[historyIndex];
+                }
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (historyIndex < commandHistory.length - 1) {
+                    historyIndex++;
+                    terminalInput.value = commandHistory[historyIndex];
+                } else if (historyIndex === commandHistory.length - 1) {
+                    historyIndex = commandHistory.length;
+                    terminalInput.value = '';
+                }
+            }
+        });
+        
+        // Dark mode persistence
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+        } else {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+</body>
+</html>
