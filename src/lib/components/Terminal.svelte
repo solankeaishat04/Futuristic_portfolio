@@ -1,12 +1,12 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   
-  let inputValue = "";
-  let output: Array<{type: 'command' | 'output' | 'header'; content: string}> = [];
-  let terminalRef: HTMLDivElement;
-  let minimized = false;
-  let commandHistory: string[] = [];
-  let historyIndex = -1;
+  let inputValue = $state("");
+  let output = $state<Array<{type: 'command' | 'output' | 'header'; content: string}>>([]);
+  let terminalRef = $state<HTMLDivElement>();
+  let minimized = $state(false);
+  let commandHistory = $state<string[]>([]);
+  let historyIndex = $state(-1);
   
   const commands: Record<string, (args?: string) => string> = {
     help: () => {
@@ -256,7 +256,7 @@ portfolio version: 2.0.0`;
 <div class="fixed bottom-4 right-4 z-50 w-96">
   <div class={`glass-effect rounded-lg overflow-hidden transition-all duration-300 shadow-2xl ${minimized ? 'h-12' : 'h-96'}`}>
     <!-- Terminal Header -->
-    <div class="flex justify-between items-center p-3 border-b border-white/10 cursor-pointer bg-black/30" onclick={() => minimized = !minimized}>
+    <div class="flex justify-between items-center p-3 border-b border-white/10 cursor-pointer bg-black/30" role="button" tabindex="0" onclick={() => minimized = !minimized} onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); minimized = !minimized; } }}>
       <div class="flex items-center gap-2">
         <div class="w-2 h-2 bg-red-500 rounded-full"></div>
         <div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
@@ -265,14 +265,14 @@ portfolio version: 2.0.0`;
         <span class="text-sm font-mono text-purple-400">developer@portfolio:~/terminal</span>
       </div>
       <div class="flex gap-2">
-        <span class="text-xs hover:text-purple-400 transition cursor-pointer" onclick={(e) => {
+        <button type="button" class="text-xs hover:text-purple-400 transition cursor-pointer" onclick={(e) => {
           e.stopPropagation();
           minimized = true;
-        }}>−</span>
-        <span class="text-xs hover:text-red-400 transition cursor-pointer" onclick={(e) => {
+        }}>−</button>
+        <button type="button" class="text-xs hover:text-red-400 transition cursor-pointer" onclick={(e) => {
           e.stopPropagation();
           minimized = true;
-        }}>✕</span>
+        }}>✕</button>
       </div>
     </div>
     

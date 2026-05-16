@@ -84,7 +84,7 @@
     <!-- CTA Buttons -->
     <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12 hero-buttons">
       <button 
-        on:click={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
+        onclick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
         class="group relative px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg font-semibold overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/25 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:ring-offset-black"
         aria-label="Explore my work - scroll to projects section"
       >
@@ -96,7 +96,7 @@
       </button>
       
       <button 
-        on:click={() => {
+        onclick={() => {
           const link = document.createElement('a');
           link.href = 'https://drive.google.com/file/d/1resume/view?usp=sharing';
           link.target = '_blank';

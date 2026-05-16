@@ -25,6 +25,6 @@
   <Projects />
   <Skills />
   <Contact />
-  <slot />
+  {@render children()}
 </main>
 <Terminal />

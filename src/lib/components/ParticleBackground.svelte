@@ -173,4 +173,4 @@
   bind:this={canvas} 
   class="fixed top-0 left-0 w-full h-full pointer-events-none z-0"
   style="background: radial-gradient(circle at center, rgba(0,0,0,0) 0%, rgba(0,0,0,0.3) 100%);"
-/>
+></canvas>

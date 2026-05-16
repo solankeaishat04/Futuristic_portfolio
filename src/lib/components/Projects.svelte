@@ -137,8 +137,8 @@
         <div 
           bind:this={cardsRef[index]}
           class="group relative glass-effect rounded-xl overflow-hidden transition-all duration-500 cursor-pointer focus-within:ring-2 focus-within:ring-purple-500"
-          on:mouseenter={() => hoveredCard = index}
-          on:mouseleave={() => hoveredCard = null}
+          onmouseenter={() => hoveredCard = index}
+          onmouseleave={() => hoveredCard = null}
           role="article"
           tabindex="0"
           aria-label="{project.title} project"

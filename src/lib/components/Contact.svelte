@@ -5,17 +5,17 @@
   
   gsap.registerPlugin(ScrollTrigger);
   
-  let formData = {
+  let formData = $state({
     name: '',
     email: '',
     message: ''
-  };
+  });
   
-  let formErrors: Record<string, string> = {};
-  let isSubmitting = false;
-  let submitStatus: 'idle' | 'success' | 'error' = 'idle';
-  let errorMessage = '';
-  let formRef: HTMLFormElement;
+  let formErrors = $state<Record<string, string>>({});
+  let isSubmitting = $state(false);
+  let submitStatus = $state<'idle' | 'success' | 'error'>('idle');
+  let errorMessage = $state('');
+  let formRef = $state<HTMLFormElement>();
   
   function validateForm(): boolean {
     formErrors = {};
@@ -139,7 +139,7 @@
       
       <!-- Contact Form -->
       <div class="glass-effect rounded-xl p-6 md:col-span-2">
-        <form bind:this={formRef} on:submit={handleSubmit} class="space-y-5" novalidate>
+        <form bind:this={formRef} onsubmit={handleSubmit} class="space-y-5" novalidate>
           <div>
             <label for="name-input" class="block text-sm font-medium mb-2 text-gray-300">
               Name <span class="text-red-400" aria-label="required">*</span>

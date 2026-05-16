@@ -2,7 +2,8 @@ import { json } from '@sveltejs/kit';
 import { Resend } from 'resend';
 import { z } from 'zod';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resendApiKey = process.env.RESEND_API_KEY;
+const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
 const contactFormSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -16,6 +17,13 @@ export async function POST({ request }) {
 
     // Validate the form data
     const validatedData = contactFormSchema.parse(body);
+
+    if (!resend) {
+      return json(
+        { error: 'Resend API key is not configured.' },
+        { status: 500 }
+      );
+    }
 
     // Send email using Resend
     const result = await resend.emails.send({

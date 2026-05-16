@@ -160,8 +160,8 @@
   });
 </script>
 
-<canvas bind:this={canvas} class="absolute inset-0 w-full h-full" aria-hidden="true" />
-<div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/40 pointer-events-none" />
+<canvas bind:this={canvas} class="absolute inset-0 w-full h-full" aria-hidden="true"></canvas>
+<div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/40 pointer-events-none"></div>
 
 <style>
   canvas {

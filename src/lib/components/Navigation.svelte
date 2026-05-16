@@ -1,10 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   
-  let isOpen = false;
-  let isDark = true;
-  let activeSection = 'home';
-  let scrolled = false;
+  let isOpen = $state(false);
+  let isDark = $state(true);
+  let activeSection = $state('home');
+  let scrolled = $state(false);
   
   function toggleTheme() {
     isDark = !isDark;
@@ -74,8 +74,8 @@
       <!-- Logo -->
       <button 
         class="flex items-center cursor-pointer group focus:outline-none focus:ring-2 focus:ring-purple-400 rounded px-2 py-1"
-        on:click={() => scrollToSection('home')}
-        on:keydown={(e) => handleKeyDown(e, 'home')}
+        onclick={() => scrollToSection('home')}
+        onkeydown={(e) => handleKeyDown(e, 'home')}
         aria-label="Back to home"
       >
         <div class="text-2xl font-bold text-gradient animate-gradient">
@@ -85,11 +85,11 @@
       </button>
       
       <!-- Desktop Menu -->
-      <nav class="hidden md:flex items-center space-x-8">
+      <div class="hidden md:flex items-center space-x-8">
         {#each ['home', 'projects', 'skills', 'contact'] as section}
           <button
-            on:click={() => scrollToSection(section)}
-            on:keydown={(e) => handleKeyDown(e, section)}
+            onclick={() => scrollToSection(section)}
+            onkeydown={(e) => handleKeyDown(e, section)}
             class={`relative px-3 py-2 text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-400 rounded ${
               activeSection === section
                 ? 'text-purple-400'
@@ -106,7 +106,7 @@
         {/each}
         
         <button
-          on:click={toggleTheme}
+          onclick={toggleTheme}
           class="glass-effect p-2 rounded-lg hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-400"
           aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
           title={isDark ? 'Light mode' : 'Dark mode'}
@@ -122,7 +122,7 @@
       <!-- Mobile Menu Button -->
       <div class="md:hidden flex items-center gap-2">
         <button
-          on:click={toggleTheme}
+          onclick={toggleTheme}
           class="glass-effect p-2 rounded-lg hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-400"
           aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
           title={isDark ? 'Light mode' : 'Dark mode'}
@@ -135,7 +135,7 @@
         </button>
         
         <button
-          on:click={() => isOpen = !isOpen}
+          onclick={() => isOpen = !isOpen}
           class="glass-effect p-2 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-400"
           aria-label={isOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={isOpen}
@@ -156,8 +156,8 @@
       <div class="px-2 pt-2 pb-3 space-y-1">
         {#each ['home', 'projects', 'skills', 'contact'] as section}
           <button
-            on:click={() => scrollToSection(section)}
-            on:keydown={(e) => handleKeyDown(e, section)}
+            onclick={() => scrollToSection(section)}
+            onkeydown={(e) => handleKeyDown(e, section)}
             class="block w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-400"
             aria-current={activeSection === section ? 'page' : undefined}
           >
