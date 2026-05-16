@@ -1,4 +1,5 @@
 <script>
+  let { children } = $props();
   import '../app.css';
   // @ts-ignore
   import Navigation from '$lib/components/Navigation.svelte';
