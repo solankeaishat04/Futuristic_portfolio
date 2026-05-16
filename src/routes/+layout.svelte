@@ -1,5 +1,6 @@
 <script>
   import '../app.css';
+  // @ts-ignore
   import Navigation from '$lib/components/Navigation.svelte';
   import ParticleBackground from '$lib/components/ParticleBackground.svelte';
   import Terminal from '$lib/components/Terminal.svelte';
@@ -24,5 +25,6 @@
   <Projects />
   <Skills />
   <Contact />
+  <slot />
 </main>
 <Terminal />
